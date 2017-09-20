@@ -1,5 +1,7 @@
 'use strict';
 
+duckduckgoTimer.mark("abp-filter-parser.js IN")
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var ABPFilterParser =
@@ -6455,7 +6457,7 @@ var ABPFilterParser =
           } else if (handler = global.onunhandledrejection) {
             handler({ promise: promise, reason: value });
           } else if ((console = global.console) && console.error) {
-            console.error('Unhandled promise rejection', value);
+            // console.error('Unhandled promise rejection', value);
           }
         });
         // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
@@ -9943,7 +9945,7 @@ var ABPFilterParser =
          * Print the buffer, mostly used for debugging only
          */
         value: function print() {
-          console.log(this.buffer);
+          // console.log(this.buffer);
         }
       }, {
         key: 'getLocationsForCharCodes',
@@ -10083,3 +10085,7 @@ var ABPFilterParser =
 
   /***/}]
 /******/);
+
+duckduckgoTimer.mark("abp-filter-parser.js OUT")
+
+

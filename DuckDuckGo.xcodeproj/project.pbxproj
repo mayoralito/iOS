@@ -38,6 +38,8 @@
 		85BA585A1F3506AE00C6E8CA /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BA58591F3506AE00C6E8CA /* AppSettings.swift */; };
 		85BA79911F6FF75000F59015 /* ContentBlockerStoreConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BA79901F6FF75000F59015 /* ContentBlockerStoreConstants.swift */; };
 		85BA79951F71B37100F59015 /* tlds.js in Resources */ = {isa = PBXBuildFile; fileRef = 85BA79941F71B37100F59015 /* tlds.js */; };
+		85BA79981F72C2ED00F59015 /* timer.js in Resources */ = {isa = PBXBuildFile; fileRef = 85BA79971F72C2ED00F59015 /* timer.js */; };
+		85BA799B1F72D0E700F59015 /* PerfTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BA799A1F72D0E700F59015 /* PerfTimer.swift */; };
 		85CEC0771F2FD5CD0092C0C3 /* Stories.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 85CEC0731F2FD5CD0092C0C3 /* Stories.xcdatamodeld */; };
 		85ECA7EE1F2A82C20018EBEB /* Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ECA7ED1F2A82C20018EBEB /* Migration.swift */; };
 		85ECA7F11F2A83190018EBEB /* MigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ECA7F01F2A83190018EBEB /* MigrationTests.swift */; };
@@ -357,6 +359,8 @@
 		85BA58591F3506AE00C6E8CA /* AppSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		85BA79901F6FF75000F59015 /* ContentBlockerStoreConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentBlockerStoreConstants.swift; sourceTree = "<group>"; };
 		85BA79941F71B37100F59015 /* tlds.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = tlds.js; sourceTree = "<group>"; };
+		85BA79971F72C2ED00F59015 /* timer.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = timer.js; sourceTree = "<group>"; };
+		85BA799A1F72D0E700F59015 /* PerfTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerfTimer.swift; sourceTree = "<group>"; };
 		85CEC0741F2FD5CD0092C0C3 /* Stories v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Stories v2.xcdatamodel"; sourceTree = "<group>"; };
 		85CEC0751F2FD5CD0092C0C3 /* Stories v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Stories v3.xcdatamodel"; sourceTree = "<group>"; };
 		85CEC0761F2FD5CD0092C0C3 /* Stories.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Stories.xcdatamodel; sourceTree = "<group>"; };
@@ -773,6 +777,14 @@
 			name = FireAnimation;
 			sourceTree = "<group>";
 		};
+		85BA79991F72D0DA00F59015 /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				85BA799A1F72D0E700F59015 /* PerfTimer.swift */,
+			);
+			name = Timer;
+			sourceTree = "<group>";
+		};
 		85ECA7EA1F2A825C0018EBEB /* Migration */ = {
 			isa = PBXGroup;
 			children = (
@@ -1027,6 +1039,7 @@
 		F143C2E51E4A4CD400CFDE3A /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				85BA79991F72D0DA00F59015 /* Timer */,
 				F143C3141E4A99BE00CFDE3A /* Domain */,
 				F11E23051ED33D8B00523BC9 /* API */,
 				F11E22E91ED31CA000523BC9 /* Parser */,
@@ -1281,6 +1294,7 @@
 				85047B871F6966ED002A95D8 /* disconnectme.js */,
 				85047B891F69692C002A95D8 /* contentblocker.js */,
 				85BA79941F71B37100F59015 /* tlds.js */,
+				85BA79971F72C2ED00F59015 /* timer.js */,
 			);
 			name = Javascript;
 			sourceTree = "<group>";
@@ -1880,6 +1894,7 @@
 				85047B821F6827AD002A95D8 /* blockerdata.js in Resources */,
 				F18608E01E5E649400361C30 /* document.js in Resources */,
 				85FC52641F6BD86700933A70 /* abp-filter-parser-packed-es2015.js in Resources */,
+				85BA79981F72C2ED00F59015 /* timer.js in Resources */,
 				85047B8A1F69692C002A95D8 /* contentblocker.js in Resources */,
 				8372C4FF1F6C977400B0B76B /* effective_tld_names.dat in Resources */,
 				85047B881F6966ED002A95D8 /* disconnectme.js in Resources */,
@@ -2132,6 +2147,7 @@
 				F16394071ECE01E400DDD653 /* DisconnectMeContentBlockerParser.swift in Sources */,
 				F1C81A721F33855D00241DE6 /* SFContentBlockerManagerExtension.swift in Sources */,
 				F1134EB31F40AD2500B73467 /* Cohort.swift in Sources */,
+				85BA799B1F72D0E700F59015 /* PerfTimer.swift in Sources */,
 				85782E261F33E24900313000 /* UserText.swift in Sources */,
 				F143C3291E4A9A0E00CFDE3A /* URLExtension.swift in Sources */,
 				F143C3271E4A9A0E00CFDE3A /* Logger.swift in Sources */,

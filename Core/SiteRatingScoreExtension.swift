@@ -75,7 +75,7 @@ public extension SiteRating {
     }
     
     public var siteGrade: SiteGrade {
-        logCalculation()
+        // logCalculation()
         return SiteGrade.grade(fromScore: siteScore)
     }
     

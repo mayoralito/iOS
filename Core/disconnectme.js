@@ -17,6 +17,8 @@
 //  limitations under the License.
 //
 
+duckduckgoTimer.mark("disconnectme.js IN")
+
 var DisconnectMe = function() {
 
 	// private
@@ -44,11 +46,9 @@ var DisconnectMe = function() {
 		for (var i = max - 2; i >= 0; i--) {
 			var hostname = domainNameParts.slice(i, max).join(".");
 			var parent = duckduckgoBlockerData.disconnectme[hostname]
-
+			
 			if (parent) {
-				console.log("DisconnectMe matched " + domainToCheck + " with " + parent)
  				if (isCurrentDomain(parent, currentDomain)) {
-					console.log("DisconnectMe skipping " + domainToCheck + " as " + parent + " matches " + currentDomain)
  					return false
  				}
 				return parent
@@ -62,3 +62,6 @@ var DisconnectMe = function() {
 		parentTracker: parentTracker
 	}
 }()
+
+duckduckgoTimer.mark("disconnectme.js OUT")
+

@@ -6,6 +6,7 @@
 
 // Adaptation of https://github.com/mozilla-mobile/firefox-ios/blob/master/Client/Assets/Favicons.js
 
+duckduckgoTimer.mark("favicon.js IN")
 
 var duckduckgoFavicon = function() {
     
@@ -45,3 +46,5 @@ var duckduckgoFavicon = function() {
     };
     
 }();
+
+duckduckgoTimer.mark("favicon.js OUT")

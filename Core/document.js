@@ -17,6 +17,7 @@
 //  limitations under the License.
 //
 
+duckduckgoTimer.mark("document.js IN")
 
 var duckduckgoDocument = function () {
     
@@ -41,3 +42,5 @@ var duckduckgoDocument = function () {
     };
     
 }();
+
+duckduckgoTimer.mark("document.js OUT")

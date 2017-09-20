@@ -17,6 +17,8 @@
 //  limitations under the License.
 //
 
+duckduckgoTimer.mark("contentblocker.js IN")
+
 var duckduckgoContentBlocking = function() {
 
 	// private
@@ -31,8 +33,7 @@ var duckduckgoContentBlocking = function() {
 				method: detectionMethod
 			});
 		} catch(error) {
-			// ShareExtension has no message handles, so webkit variable never gets declared
-			console.log(error + " while messaging to app")
+			// webkit might not be defined
 		}
 	}
 
@@ -75,12 +76,10 @@ var duckduckgoContentBlocking = function() {
 	// private
 	function block(event) {
 		if (!duckduckgoBlockerData.blockingEnabled) {
-			console.warn("DuckDuckGo blocking is disabled")
 			return false
 		}
 
 		if (currentDomainIsWhitelisted()) {
-			console.warn("DuckDuckGo blocking is disabled for this domain")
 			return false
 		}
 
@@ -88,7 +87,6 @@ var duckduckgoContentBlocking = function() {
 			return false
 		}
 
-		console.info("DuckDuckGo is blocking: " + event.url)
 		event.preventDefault()
 		event.stopPropagation()
 		return true
@@ -149,21 +147,27 @@ var duckduckgoContentBlocking = function() {
 
 	// private
 	function easylistPrivacyMatch(event) {
-		return checkEasylist(event, duckduckgoBlockerData.easylistPrivacy, "easylist-privacy")
+//		duckduckgoTimer.mark("easylistPrivacyMatch IN, " + event.url)			
+		var result = checkEasylist(event, duckduckgoBlockerData.easylistPrivacy, "easylist-privacy")
+//		duckduckgoTimer.mark("easylistPrivacyMatch OUT, " + result + ": " + event.url)			
+		return result
 	}
 
 	// private
 	function easylistMatch(event) {
-		return checkEasylist(event, duckduckgoBlockerData.easylist, "easylist")
+//		duckduckgoTimer.mark("easylistMatch IN, " + event.url)			
+		var result = checkEasylist(event, duckduckgoBlockerData.easylist, "easylist")
+//		duckduckgoTimer.mark("easylistMatch OUT, " + result + ": " + event.url)			
+		return result
 	}
 
 	// public
 	function install(document) {
 		document.addEventListener("beforeload", function(event) {
-			console.log("DuckDuckGo checking " + event.url)	
-			disconnectMeMatch(event) || easylistPrivacyMatch(event) || easylistMatch(event)
+			duckduckgoTimer.mark("beforeload IN, " + event.url)			
+			var detected = disconnectMeMatch(event) || easylistPrivacyMatch(event) || easylistMatch(event)
+			duckduckgoTimer.mark("beforeload OUT, detected? " + detected + ": " + event.url)			
 		}, true)
-		console.info("DuckDuckGo Content Blocker installed")
 	}
 
 	return { 
@@ -173,3 +177,4 @@ var duckduckgoContentBlocking = function() {
 
 duckduckgoContentBlocking.install(document)
 
+duckduckgoTimer.mark("contentblocker.js OUT")

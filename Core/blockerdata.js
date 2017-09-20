@@ -17,18 +17,7 @@
 //  limitations under the License.
 //
 
-
-duckduckgo_decodeBase64 = function(s) {
-    var e={},i,b=0,c,x,l=0,a,r='',w=String.fromCharCode,L=s.length;
-    var A="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    for(i=0;i<64;i++){e[A.charAt(i)]=i;}
-    for(x=0;x<L;x++){
-        c=e[s.charAt(x)];b=(b<<6)+c;l+=6;
-        while(l>=8){((a=(b>>>(l-=8))&0xff)||(x<(L-2)))&&(r+=w(a));}
-    }
-    return r;
-};
-
+duckduckgoTimer.mark("blockerdata.js IN")
 
 var duckduckgoBlockerData = {
 
@@ -43,24 +32,24 @@ var duckduckgoBlockerData = {
 try {
 
     ABPFilterParser.parse(function() {
-
-        var easylistData = duckduckgo_decodeBase64("${easylist_general}")
-        console.log("Easylist: " + easylistData.substring(0, 100))
-        return easylistData
-        
-    }(), duckduckgoBlockerData.easylist)  
-
-    ABPFilterParser.parse(function() {
-
-        var easylistData = duckduckgo_decodeBase64("${easylist_privacy}")
-        console.log("Easylist Privacy: " + easylistData.substring(0, 100))
+        var encoded = "${easylist_privacy}"
+        var easylistData = decodeURIComponent(encoded)
         return easylistData
 
     }(), duckduckgoBlockerData.easylistPrivacy)
+    duckduckgoTimer.mark("blockerdata.js easylist privacy parsed")
+
+    ABPFilterParser.parse(function() {
+        var encoded = "${easylist_general}"
+        var easylistData = decodeURIComponent(encoded)
+        return easylistData
+        
+    }(), duckduckgoBlockerData.easylist)
+    duckduckgoTimer.mark("blockerdata.js easylist general parsed")
+
 
 } catch (error) {
-
-    console.warn("DuckDuckGo: Unable to find ABPFilterParser - some content blocking might not work")
-    console.log(error + ", document location: " + document.location)
-
+    // no-op
 }
+
+duckduckgoTimer.mark("blockerdata.js OUT")

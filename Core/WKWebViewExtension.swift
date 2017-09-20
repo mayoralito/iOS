@@ -43,15 +43,15 @@ extension WKWebView {
     private func loadContentBlockerScripts(with whitelistedDomains: Set<String>, and blockingEnabled: Bool) {
         loadContentBlockerDependencyScripts()
         loadBlockerData(with: whitelistedDomains.toJsonLookupString(), and: blockingEnabled)
-        load(scripts: [ .disconnectme, .contentblocker ], forMainFrameOnly: false)
+        load(scripts: [ .disconnectme, .contentblocker ], forMainFrameOnly: true)
     }
 
     private func loadContentBlockerDependencyScripts() {
-        load(scripts: [ .apbfilter, .tlds ], forMainFrameOnly: false)
+        load(scripts: [ .apbfilter, .tlds ], forMainFrameOnly: true)
     }
 
     private func loadDocumentLevelScripts() {
-        load(scripts: [ .document, .favicon ])
+        load(scripts: [ .timer, .document, .favicon ])
     }
 
     private func loadBlockerData(with whitelist: String, and blockingEnabled: Bool) {
@@ -69,7 +69,7 @@ extension WKWebView {
         for (key, value) in replacements {
             js = js.replacingOccurrences(of: key, with: value)
         }
-        let script = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: false)
+        let script = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         configuration.userContentController.addUserScript(script)
 
     }

@@ -25,6 +25,7 @@ import WebKit
 public class JavascriptLoader {
     
     public enum Script: String {
+        case timer
         case document
         case favicon
         case disconnectme

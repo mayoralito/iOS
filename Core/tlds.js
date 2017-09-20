@@ -1,4 +1,6 @@
 
+duckduckgoTimer.mark("tlds.js IN")
+
 // Based on https://github.com/131/node-tld
 var duckduckgoTLDParser = function() {
 
@@ -7901,3 +7903,6 @@ var duckduckgoTLDParser = function() {
 	}
 
 }()
+
+duckduckgoTimer.mark("tlds.js OUT")
+

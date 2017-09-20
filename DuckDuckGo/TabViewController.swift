@@ -32,7 +32,7 @@ class TabViewController: WebViewController {
     private(set) var contentBlocker: ContentBlockerConfigurationStore!
     private weak var contentBlockerPopover: ContentBlockerPopover?
     private(set) var siteRating: SiteRating?
-    
+
     static func loadFromStoryboard(contentBlocker: ContentBlockerConfigurationStore) -> TabViewController {
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabViewController") as! TabViewController
         controller.contentBlocker = contentBlocker
@@ -57,7 +57,7 @@ class TabViewController: WebViewController {
     @IBAction func onBottomOfScreenTapped(_ sender: UITapGestureRecognizer) {
         showBars()
     }
-    
+
     fileprivate func showBars() {
         navigationController?.isNavigationBarHidden = false
         navigationController?.isToolbarHidden = false
@@ -238,6 +238,7 @@ extension TabViewController: WKScriptMessageHandler {
     
     struct MessageName {
         static let trackerDetected = "trackerDetectedMessage"
+        static let timer = "timerMessage"
     }
     
     struct TrackerDetectedKey {
@@ -247,6 +248,12 @@ extension TabViewController: WKScriptMessageHandler {
     }
 
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+
+        if message.name == MessageName.timer {
+            let jsMessage = message.body as? String ?? ""
+            PerfTimer.shared.mark(jsMessage, from: "JS")
+        }
+
         if message.name == MessageName.trackerDetected {
             Logger.log(text: "\(MessageName.trackerDetected) \(message.body)")
             guard let dict = message.body as? Dictionary<String, Any> else { return }
@@ -264,26 +271,30 @@ extension TabViewController: WebEventsDelegate {
 
     struct Constants {
         static let trackerDetectedMessage = "trackerDetectedMessage"
+        static let timerMessage = "timerMessage"
     }
 
     func attached(webView: WKWebView) {
         webView.scrollView.delegate = self
         webView.configuration.userContentController.add(self, name: Constants.trackerDetectedMessage)
+        webView.configuration.userContentController.add(self, name: Constants.timerMessage)
     }
     
     func detached(webView: WKWebView) {
         webView.configuration.userContentController.removeScriptMessageHandler(forName: Constants.trackerDetectedMessage)
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: Constants.timerMessage)
     }
 
     func webpageDidStartLoading() {
-        Logger.log(items: "webpageLoading started:", Date().timeIntervalSince1970)
+        PerfTimer.shared.reset()
+        PerfTimer.shared.mark("webpageDidStartLoading", from: "APP")
         resetSiteRating()
         delegate?.tabLoadingStateDidChange(tab: self)
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
     
     func webpageDidFinishLoading() {
-        Logger.log(items: "webpageLoading finished:", Date().timeIntervalSince1970)
+        PerfTimer.shared.mark("webpageDidFinishLoading", from: "APP")
         updateSiteRating()
         delegate?.tabLoadingStateDidChange(tab: self)
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
