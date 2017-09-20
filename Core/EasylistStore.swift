@@ -45,7 +45,7 @@ class EasylistStore {
         guard let data = try? Data(contentsOf: persistenceLocation(type: type)) else {
             return nil
         }
-        return String(data: data, encoding: .utf8)?.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
+        return String(data: data, encoding: .utf8)?.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "`", with: "\\`")
     }
 
     func persistEasylist(data: Data) {

@@ -31,22 +31,11 @@ var duckduckgoBlockerData = {
 
 try {
 
-    ABPFilterParser.parse(function() {
-        var encoded = "${easylist_privacy}"
-        var easylistData = decodeURIComponent(encoded)
-        return easylistData
-
-    }(), duckduckgoBlockerData.easylistPrivacy)
+    ABPFilterParser.parse(`${easylist_privacy}`, duckduckgoBlockerData.easylistPrivacy)
     duckduckgoTimer.mark("blockerdata.js easylist privacy parsed")
 
-    ABPFilterParser.parse(function() {
-        var encoded = "${easylist_general}"
-        var easylistData = decodeURIComponent(encoded)
-        return easylistData
-        
-    }(), duckduckgoBlockerData.easylist)
+    ABPFilterParser.parse(`${easylist_general}`, duckduckgoBlockerData.easylist)
     duckduckgoTimer.mark("blockerdata.js easylist general parsed")
-
 
 } catch (error) {
     // no-op

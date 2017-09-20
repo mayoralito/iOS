@@ -165,6 +165,12 @@ var duckduckgoContentBlocking = function() {
 	function install(document) {
 		document.addEventListener("beforeload", function(event) {
 			duckduckgoTimer.mark("beforeload IN, " + event.url)			
+
+			if (!event.url.startsWith("//") && (event.url.startsWith("/") || isFirstParty(event))) {
+				duckduckgoTimer.mark("beforeload OUT, skipped " + event.url)
+				return
+			}
+
 			var detected = disconnectMeMatch(event) || easylistPrivacyMatch(event) || easylistMatch(event)
 			duckduckgoTimer.mark("beforeload OUT, detected? " + detected + ": " + event.url)			
 		}, true)
