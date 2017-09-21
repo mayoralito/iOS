@@ -1,6 +1,10 @@
 'use strict';
 
-duckduckgoTimer.mark("abp-filter-parser.js IN")
+try { 
+  duckduckgoTimer.mark("abp-filter-parser.js IN")
+} catch (error) {
+  // ignore
+}
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -10086,6 +10090,8 @@ var ABPFilterParser =
   /***/}]
 /******/);
 
-duckduckgoTimer.mark("abp-filter-parser.js OUT")
-
-
+try {
+    duckduckgoTimer.mark("abp-filter-parser.js OUT")
+} catch(error) {
+  
+}

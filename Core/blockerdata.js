@@ -24,21 +24,9 @@ var duckduckgoBlockerData = {
     blockingEnabled: ${blocking_enabled},
 	disconnectme: ${disconnectme},
     whitelist: ${whitelist},
-    easylist: {},
-    easylistPrivacy: {}
+    easylist: ${easylist_general},
+    easylistPrivacy: ${easylist_privacy}
 
-}
-
-try {
-
-    ABPFilterParser.parse(`${easylist_privacy}`, duckduckgoBlockerData.easylistPrivacy)
-    duckduckgoTimer.mark("blockerdata.js easylist privacy parsed")
-
-    ABPFilterParser.parse(`${easylist_general}`, duckduckgoBlockerData.easylist)
-    duckduckgoTimer.mark("blockerdata.js easylist general parsed")
-
-} catch (error) {
-    // no-op
 }
 
 duckduckgoTimer.mark("blockerdata.js OUT")

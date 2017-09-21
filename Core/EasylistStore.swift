@@ -16,7 +16,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
+
 import Foundation
+import JavaScriptCore
+import SwiftyJSON
 
 class EasylistStore {
 
@@ -45,7 +48,20 @@ class EasylistStore {
         guard let data = try? Data(contentsOf: persistenceLocation(type: type)) else {
             return nil
         }
-        return String(data: data, encoding: .utf8)?.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "`", with: "\\`")
+
+        guard let file = String(data: data, encoding: .utf8) else { return nil }
+        guard let uriEncodedList = file.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return nil }
+
+        let path = JavascriptLoader.path(for: JavascriptLoader.Script.apbfilter.rawValue)
+        guard let abpParserCode = try? String(contentsOfFile: path) else { return nil }
+        guard let jsContext = JSContext() else { return nil }
+
+        jsContext.evaluateScript(abpParserCode)
+        jsContext.evaluateScript("var destination = {}")
+        jsContext.evaluateScript("ABPFilterParser.parse(decodeURIComponent(\"\(uriEncodedList)\"), destination)")
+        guard let result = jsContext.evaluateScript("destination").toObject() else { return nil }
+        guard let json = try? JSONSerialization.data(withJSONObject: result, options: .prettyPrinted) else { return nil }   
+        return String(data: json, encoding: .utf8)
     }
 
     func persistEasylist(data: Data) {
