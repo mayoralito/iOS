@@ -1,5 +1,5 @@
 //
-//  blockerdata.js
+//  JSONCache.swift
 //  DuckDuckGo
 //
 //  Copyright © 2017 DuckDuckGo. All rights reserved.
@@ -17,16 +17,24 @@
 //  limitations under the License.
 //
 
-duckduckgoTimer.mark("blockerdata.js IN")
+import Foundation
 
-var duckduckgoBlockerData = {
+// in-memory cache for now
+public class JSONCache {
 
-    blockingEnabled: ${blocking_enabled},
-	disconnectme: ${disconnectme},
-    whitelist: ${whitelist},
-    easylist: {},
-    easylistPrivacy: {}
+    public static let shared = JSONCache()
+
+    private var cache = [String: String]()
+
+    private init() {
+    }
+
+    public func put(name: String, json: String) {
+        cache[name] = json
+    }
+
+    public func get(name: String) -> String? {
+        return cache[name]
+    }
 
 }
-
-duckduckgoTimer.mark("blockerdata.js OUT")

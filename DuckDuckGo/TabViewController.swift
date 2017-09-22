@@ -239,6 +239,7 @@ extension TabViewController: WKScriptMessageHandler {
     struct MessageName {
         static let trackerDetected = "trackerDetectedMessage"
         static let timer = "timerMessage"
+        static let cache = "cacheMessage"
     }
     
     struct TrackerDetectedKey {
@@ -249,9 +250,23 @@ extension TabViewController: WKScriptMessageHandler {
 
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
 
+        if message.name == MessageName.cache {
+            guard let body = message.body as? Dictionary<String, Any> else {
+                PerfTimer.shared.mark("cache ???", from: "JS")
+                return
+            }
+            PerfTimer.shared.mark("cache \(body["name"] ?? "no name")", from: "JS")
+
+            guard let name = body["name"] as? String else { return }
+            guard let data = body["data"] as? String else { return }
+            JSONCache.shared.put(name: name, json: data)
+            return;
+        }
+
         if message.name == MessageName.timer {
             let jsMessage = message.body as? String ?? ""
             PerfTimer.shared.mark(jsMessage, from: "JS")
+            return
         }
 
         if message.name == MessageName.trackerDetected {
@@ -262,7 +277,9 @@ extension TabViewController: WKScriptMessageHandler {
             let parent = dict[ TrackerDetectedKey.parentDomain] as? String
             siteRating?.trackerDetected(Tracker(url: url, parentDomain: parent), blocked: blocked)
             onSiteRatingChanged()
+            return
         }
+
     }
 
 }
@@ -272,17 +289,20 @@ extension TabViewController: WebEventsDelegate {
     struct Constants {
         static let trackerDetectedMessage = "trackerDetectedMessage"
         static let timerMessage = "timerMessage"
+        static let cacheMessage = "cacheMessage"
     }
 
     func attached(webView: WKWebView) {
         webView.scrollView.delegate = self
         webView.configuration.userContentController.add(self, name: Constants.trackerDetectedMessage)
         webView.configuration.userContentController.add(self, name: Constants.timerMessage)
+        webView.configuration.userContentController.add(self, name: Constants.cacheMessage)
     }
     
     func detached(webView: WKWebView) {
         webView.configuration.userContentController.removeScriptMessageHandler(forName: Constants.trackerDetectedMessage)
         webView.configuration.userContentController.removeScriptMessageHandler(forName: Constants.timerMessage)
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: Constants.cacheMessage)
     }
 
     func webpageDidStartLoading() {

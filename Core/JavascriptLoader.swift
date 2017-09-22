@@ -32,6 +32,7 @@ public class JavascriptLoader {
         case contentblocker
         case apbfilter = "abp-filter-parser-packed-es2015"
         case tlds
+        case bloom = "bloom-es2015"
     }
 
     class func path(for jsFile: String) -> String {

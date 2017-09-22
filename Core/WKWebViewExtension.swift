@@ -43,11 +43,31 @@ extension WKWebView {
     private func loadContentBlockerScripts(with whitelistedDomains: Set<String>, and blockingEnabled: Bool) {
         loadContentBlockerDependencyScripts()
         loadBlockerData(with: whitelistedDomains.toJsonLookupString(), and: blockingEnabled)
+        loadEasylistScript()
         load(scripts: [ .disconnectme, .contentblocker ], forMainFrameOnly: true)
     }
 
+    private func loadEasylistScript() {
+
+        let cache = JSONCache.shared
+        if let easylist = cache.get(name: "easylist"),
+            let easylistPrivacy = cache.get(name: "easylist_privacy") {
+
+            loadScript(file: "easylist-repair", with: [
+                "${easylist_json}": easylist,
+                "${easylist_privacy_json}": easylistPrivacy
+            ])
+
+        } else {
+            loadScript(file: "cache")
+            loadScript(file: "easylist-parsing", with: [
+                "${easylist_privacy}": EasylistStore.shared.easylistPrivacy,
+                "${easylist_general}": EasylistStore.shared.easylist ])
+        }
+    }
+
     private func loadContentBlockerDependencyScripts() {
-        load(scripts: [ .apbfilter, .tlds ], forMainFrameOnly: true)
+        load(scripts: [ .apbfilter, .tlds, .bloom ], forMainFrameOnly: true)
     }
 
     private func loadDocumentLevelScripts() {
@@ -55,20 +75,31 @@ extension WKWebView {
     }
 
     private func loadBlockerData(with whitelist: String, and blockingEnabled: Bool) {
-        loadBlockerJS(file: "blockerdata", with: [
+        loadScript(file: "blockerdata", with: [
             "${blocking_enabled}": "\(blockingEnabled)",
             "${disconnectme}": DisconnectMeStore.shared.bannedTrackersJson,
-            "${easylist_privacy}": EasylistStore.shared.easylistPrivacy,
-            "${easylist_general}": EasylistStore.shared.easylist,
             "${whitelist}": whitelist ])
     }
 
-    private func loadBlockerJS(file: String, with replacements: [String: String]) {
+    private func loadScript(file: String, with replacements: [String: String] = [:], dump: Bool = false) {
 
         var js = try! String(contentsOfFile: JavascriptLoader.path(for: file))
         for (key, value) in replacements {
             js = js.replacingOccurrences(of: key, with: value)
         }
+
+        if (dump) {
+            let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: ContentBlockerStoreConstants.groupName)
+            if let file = container?.appendingPathComponent(file).appendingPathExtension("js") {
+                do {
+                    try js.write(to: file, atomically: true, encoding: .utf8)
+                    print(file, "dumped to", file)
+                } catch {
+                    print(error)
+                }
+            }
+        }
+
         let script = WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         configuration.userContentController.addUserScript(script)
 
