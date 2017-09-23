@@ -2,7 +2,6 @@
 var duckduckgoTimer = function() {
 
 	function mark(message) {
-		console.log(message)
 		try {
 			webkit.messageHandlers.timerMessage.postMessage(message);
 		} catch(error) {

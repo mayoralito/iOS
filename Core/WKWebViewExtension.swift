@@ -49,7 +49,7 @@ extension WKWebView {
 
     private func loadEasylistScript() {
 
-        let cache = JSONCache.shared
+        let cache = JSONCache()
         if let easylist = cache.get(name: "easylist"),
             let easylistPrivacy = cache.get(name: "easylist_privacy") {
 
@@ -59,10 +59,11 @@ extension WKWebView {
             ])
 
         } else {
+            let easylistStore = EasylistStore()
             loadScript(file: "cache")
             loadScript(file: "easylist-parsing", with: [
-                "${easylist_privacy}": EasylistStore.shared.easylistPrivacy,
-                "${easylist_general}": EasylistStore.shared.easylist ])
+                "${easylist_privacy}": easylistStore.easylistPrivacy,
+                "${easylist_general}": easylistStore.easylist ])
         }
     }
 
@@ -75,9 +76,10 @@ extension WKWebView {
     }
 
     private func loadBlockerData(with whitelist: String, and blockingEnabled: Bool) {
+        let disconnectMeStore = DisconnectMeStore()
         loadScript(file: "blockerdata", with: [
             "${blocking_enabled}": "\(blockingEnabled)",
-            "${disconnectme}": DisconnectMeStore.shared.bannedTrackersJson,
+            "${disconnectme}": disconnectMeStore.bannedTrackersJson,
             "${whitelist}": whitelist ])
     }
 

@@ -20,8 +20,6 @@ import Foundation
 
 class EasylistStore {
 
-    static let shared = EasylistStore()
-
     enum Easylist: String {
 
         case easylist
@@ -36,7 +34,7 @@ class EasylistStore {
     private(set) var easylist: String = ""
     private(set) var easylistPrivacy: String = ""
 
-    private init() {
+    public init() {
         easylist = load(.easylist) ?? ""
         easylistPrivacy = load(.easylistPrivacy) ?? ""
     }

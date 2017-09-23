@@ -259,7 +259,7 @@ extension TabViewController: WKScriptMessageHandler {
 
             guard let name = body["name"] as? String else { return }
             guard let data = body["data"] as? String else { return }
-            JSONCache.shared.put(name: name, json: data)
+            JSONCache().put(name: name, json: data)
             return;
         }
 

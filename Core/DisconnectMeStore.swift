@@ -21,8 +21,6 @@ import Foundation
 
 class DisconnectMeStore {
 
-    static let shared = DisconnectMeStore()
-
     var hasData: Bool {
         return !allTrackers.isEmpty
     }
@@ -30,7 +28,7 @@ class DisconnectMeStore {
     private(set) var allTrackers = [String: String]()
     private(set) var bannedTrackersJson = "[]"
     
-    private init() {
+    public init() {
         try? load(data: Data(contentsOf: persistenceLocation()))
     }
     

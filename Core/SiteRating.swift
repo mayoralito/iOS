@@ -40,20 +40,21 @@ public class SiteRating {
         return url.isHttps()
     }
     
-    var majorTrackingNetwork: MajorTrackerNetwork? {
-       
+    lazy var majorTrackingNetwork: MajorTrackerNetwork? = SiteRating.loadMajorTrackingNetwork(domain: self.domain)
+
+    private static func loadMajorTrackingNetwork(domain: String) -> MajorTrackerNetwork? {
         if let network = MajorTrackerNetwork.network(forDomain: domain) {
             return network
         }
-        
-        let trackers = DisconnectMeStore.shared.allTrackers
+
+        let trackers = DisconnectMeStore().allTrackers
         if let associatedDomain = trackers.filter( { domain.hasSuffix($0.key) } ).first?.value {
             return MajorTrackerNetwork.network(forDomain: associatedDomain)
         }
-            
+
         return nil
     }
-    
+
     public var containsMajorTracker: Bool {
         return trackersDetected.contains(where: { $0.key.fromMajorNetwork } )
     }

@@ -22,15 +22,17 @@ import Foundation
 // in-memory cache for now
 public class JSONCache {
 
-    public static let shared = JSONCache()
-
     private var cache = [String: String]()
 
-    private init() {
+    public init() {
+        if let cache = UserDefaults().value(forKey: "json-cache") as? [String: String] {
+            self.cache = cache
+        }
     }
 
     public func put(name: String, json: String) {
         cache[name] = json
+        UserDefaults().set(cache, forKey: "json-cache")
     }
 
     public func get(name: String) -> String? {

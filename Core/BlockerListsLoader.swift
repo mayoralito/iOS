@@ -23,31 +23,44 @@ public typealias BlockerListsLoaderCompletion = () -> Swift.Void
 
 public class BlockerListsLoader {
 
+    var easylistStore = EasylistStore()
+    var disconnectMeStore = DisconnectMeStore()
+
     public var hasData: Bool {
         get {
-            return DisconnectMeStore.shared.hasData && EasylistStore.shared.hasData
+            return disconnectMeStore.hasData && easylistStore.hasData
         }
     }
 
     public init() { }
 
     public func start(completion: BlockerListsLoaderCompletion?) {
+        DispatchQueue.global(qos: .background).async {
 
-        let urls = AppUrls()
+            let urls = AppUrls()
+            let semaphore = DispatchSemaphore(value: 0)
+            let number = self.startDownloads(urls, semaphore)
+            for _ in 0 ..< number {
+                semaphore.wait()
+            }
+            Logger.log(items: "BlockerListsLoader", "completed")
+            completion?()
+        }
 
-        let semaphore = DispatchSemaphore(value: 0)
+    }
 
+    private func startDownloads(_ urls: AppUrls, _ semaphore: DispatchSemaphore) -> Int {
         APIRequest(url: urls.disconnectMeBlockList).execute { (data, error) in
             if let data = data {
-                try? DisconnectMeStore.shared.persist(data: data)
+                try? self.disconnectMeStore.persist(data: data)
             }
-            Logger.log(items: "DisconnectMeRequest", DisconnectMeStore.shared.allTrackers.count, "\(String(describing: error))")
+            Logger.log(items: "DisconnectMeRequest", self.disconnectMeStore.allTrackers.count, "\(String(describing: error))")
             semaphore.signal()
         }
 
         APIRequest(url: urls.easylistBlockList).execute { (data, error) in
             if let data = data {
-                EasylistStore.shared.persistEasylist(data: data)
+                self.easylistStore.persistEasylist(data: data)
             }
 
             Logger.log(items: "EasylistRequest", "\(String(describing: error))")
@@ -56,23 +69,14 @@ public class BlockerListsLoader {
 
         APIRequest(url: urls.easylistPrivacyBlockList).execute { (data, error) in
             if let data = data {
-                EasylistStore.shared.persistEasylistPrivacy(data: data)
+                self.easylistStore.persistEasylistPrivacy(data: data)
             }
 
             Logger.log(items: "EasylistPrivacyRequest", "\(String(describing: error))")
             semaphore.signal()
         }
 
-        DispatchQueue.global(qos: .background).async {
-
-            for _ in 0 ..< 3 {
-                semaphore.wait()
-            }
-
-            Logger.log(items: "BlockerListsLoader", "completed")
-            completion?()
-        }
-
+        return 3
     }
 
 }
